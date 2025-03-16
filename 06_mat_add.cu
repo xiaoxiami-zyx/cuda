@@ -1,3 +1,4 @@
+#include <cuda_runtime.h>
 #include <stdio.h>
 
 void initData(float* p, int n)
@@ -76,4 +77,12 @@ int main()
     cudaFree(d_C);
 
     cudaDeviceProp prop;
+    cudaGetDeviceProperties(&prop, 0);
+    printf("Device name: %s\n", prop.name);
+    printf("Total global memory: %zu bytes\n", prop.totalGlobalMem);
+    printf("Shared memory per block: %zu bytes\n", prop.sharedMemPerBlock);
+    printf("Registers per block: %d\n", prop.regsPerBlock);
+    printf("Warp size: %d\n", prop.warpSize);
+    printf("Max threads per block: %d\n", prop.maxThreadsPerBlock);
+    printf("compute capability: %d.%d\n", prop.major, prop.minor);
 }

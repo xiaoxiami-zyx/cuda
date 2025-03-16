@@ -1,3 +1,4 @@
+#include <cuda_runtime.h>
 #include <iostream>
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
@@ -7,7 +8,8 @@
 __global__ void fill_kernal(int* a, int n)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i < n) a[i] = i;
+    if (i < n)
+        a[i] = i;
 }
 
 void fill(int* a, int n)

@@ -1,5 +1,5 @@
+#include <cuda_runtime.h>
 #include <stdio.h>
-
 __global__ void hello_from_gpu()
 {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
