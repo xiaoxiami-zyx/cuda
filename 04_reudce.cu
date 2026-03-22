@@ -1,4 +1,6 @@
 #include "error.cu"
+#include <cuda/cmath>
+#include <cuda_runtime.h>
 #include <stdio.h>
 
 // #define USE_DP
@@ -45,11 +47,15 @@ void __global__ reduce_global(real* d_x, real* d_y)
 
     for (int offset = blockDim.x >> 1; offset > 0; offset >>= 1)
     {
-        if (tid < offset) { x[tid] += x[tid + offset]; }
+        if (tid < offset)
+        {
+            x[tid] += x[tid + offset];
+        }
         __syncthreads();
     }
 
-    if (tid == 0) d_y[blockIdx.x] = x[0];
+    if (tid == 0)
+        d_y[blockIdx.x] = x[0];
 }
 
 void __global__ reduce_shared(real* d_x, real* d_y)
@@ -62,11 +68,17 @@ void __global__ reduce_shared(real* d_x, real* d_y)
 
     for (int offset = blockDim.x >> 1; offset > 0; offset >>= 1)
     {
-        if (tid < offset) { s_y[tid] += s_y[tid + offset]; }
+        if (tid < offset)
+        {
+            s_y[tid] += s_y[tid + offset];
+        }
         __syncthreads();
     }
 
-    if (tid == 0) { d_y[blockIdx.x] = s_y[0]; }
+    if (tid == 0)
+    {
+        d_y[blockIdx.x] = s_y[0];
+    }
 }
 
 void __global__ reduce_dynamic(real* d_x, real* d_y)
@@ -80,11 +92,17 @@ void __global__ reduce_dynamic(real* d_x, real* d_y)
 
     for (int offset = blockDim.x >> 1; offset > 0; offset >>= 1)
     {
-        if (tid < offset) { s_y[tid] += s_y[tid + offset]; }
+        if (tid < offset)
+        {
+            s_y[tid] += s_y[tid + offset];
+        }
         __syncthreads();
     }
 
-    if (tid == 0) { d_y[bid] = s_y[0]; }
+    if (tid == 0)
+    {
+        d_y[bid] = s_y[0];
+    }
 }
 
 real reduce(real* d_x, const int method)
@@ -147,4 +165,6 @@ void timing(real* h_x, real* d_x, const int method)
     }
 
     printf("sum = %f.\n", sum);
+
+    cuda::ceil_div(N, BLOCK_SIZE);
 }
